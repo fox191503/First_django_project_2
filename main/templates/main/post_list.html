@@ -1,5 +1,10 @@
 {% extends "main/base.html" %}
 {% block content %}
+<form method="get" action="{% url "main:search" %}">
+    <input type="text" name='q' value="">Поиск</input>
+    <input type="submit" value="Search">
+
+</form>
         <table id='posts' border=2>
             <th>ABTOP</th>
             <th>Заголовок</th>

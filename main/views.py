@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from .models import Post
 from .forms import PostForm
@@ -29,9 +30,12 @@ def contacts(request):
     return render(request, 'main/contacts.html', context=context)
 
 # отображения списка постов
-def post_list(request):
+def post_list(request, results=None):
     # получаем все обьекты таблицы(модели) Post
-    posts = Post.objects.all()
+    if results is None:
+        posts = Post.objects.all()
+    else:
+        posts = results
     # Заносим их в обьект контекста для передачи в шаблон
     context = {'posts': posts, 'menu': menu}
     return render(request, template_name= 'main/post_list.html', context=context)
@@ -90,4 +94,9 @@ def post_delete(request, pk):
     form = PostForm(instance=post)
     return render(request, "main/post_delete.html", {"form": form, "menu": menu, "post":post})
 
-
+def search(request):
+    query = request.GET.get('q')
+    ft = Q(title__icontains=query)
+    #results = Post.objects.filter(author__username=query)
+    results = Post.objects.filter(ft)
+    return post_list(request, results)
